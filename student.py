@@ -227,3 +227,71 @@ class Student:
         update_photo_btn = Button(btn_frame1, text="Update Photo Sample", width=31, font=(
             "times new roman", 12, "bold"), bg="blue", fg="white")
         update_photo_btn.grid(row=1, column=1)
+
+        # Right label frame
+        Right_frame = LabelFrame(main_frame, bd=2, bg="white", relief=RIDGE,
+                                 text="Student Details", font=("times new roman", 12, "bold"))
+        Right_frame.place(x=640, y=0, width=600, height=482)
+
+        img_right = Image.open(
+            r"E:\FACE @\college_images\gettyimages-1022573162.jpg")
+        img_right = img_right.resize((380, 70), Image.LANCZOS)
+        self.photoimg_right = ImageTk.PhotoImage(img_right)
+
+        f_lbl = Label(Right_frame, image=self.photoimg_right)
+        f_lbl.place(x=90, y=0, width=380, height=70)
+
+        # ======== Search System ===========
+        Search_frame = LabelFrame(Right_frame, bd=2, bg="white", relief=RIDGE,
+                                  text="Search System", font=("times new roman", 12, "bold"))
+        Search_frame.place(x=5, y=75, width=580, height=70)
+
+        search_label = Label(Search_frame, text="Search By:", font=(
+            "times new roman", 15, "bold"), bg="red", fg="white")
+        search_label.grid(row=0, column=0, padx=10, pady=5, sticky=W)
+
+        search_combo = ttk.Combobox(Search_frame, font=(
+            "times new roman", 12, "bold"), state="readonly", width=15)
+        search_combo["values"] = ("Select", "Roll_No", "Phone_NO")
+        search_combo.current(0)
+        search_combo.grid(row=0, column=1, padx=2, pady=10, sticky=W)
+
+        search_entry = ttk.Entry(
+            Search_frame, width=12, font=("times new roman", 12, "bold"))
+        search_entry.grid(row=0, column=2, padx=10, pady=5, sticky=W)
+
+        search_btn = Button(Search_frame, text="Search", width=9, font=(
+            "times new roman", 12, "bold"), bg="blue", fg="white")
+        search_btn.grid(row=0, column=3)
+
+        showAll_btn = Button(Search_frame, text="Show All", width=9, font=(
+            "times new roman", 12, "bold"), bg="blue", fg="white")
+        showAll_btn.grid(row=0, column=4)
+
+        # ==============table frame===============
+        table_frame = Frame(Right_frame, bd=2, bg="white", relief=RIDGE)
+        table_frame.place(x=5, y=155, width=580, height=300)
+
+        scroll_x = ttk.Scrollbar(table_frame, orient=HORIZONTAL)
+        scroll_y = ttk.Scrollbar(table_frame, orient=VERTICAL)
+
+        self.student_table = ttk.Treeview(table_frame, column=("Department", "Course", "Year", "Sem", "Id", "Name",
+                                          "Div", "Reg", "Email", "Phone", "Photo"), xscrollcommand=scroll_x.set, yscrollcommand=scroll_y.set)
+
+        scroll_x.pack(side=BOTTOM, fill=X)
+        scroll_y.pack(side=RIGHT, fill=Y)
+        scroll_x.config(command=self.student_table.xview)
+        scroll_y.config(command=self.student_table.yview)
+
+        self.student_table.heading("Department", text="Department")
+        self.student_table.heading("Course", text="Course")
+        self.student_table.heading("Year", text="Year")
+        self.student_table.heading("Sem", text="Semester")
+        self.student_table.heading("Id", text="StudentId")
+        self.student_table.heading("Name", text="Name")
+        self.student_table.heading("Div", text="Division")
+        self.student_table.heading("Reg", text="Reg No")
+        self.student_table.heading("Email", text="Email")
+        self.student_table.heading("Phone", text="Phone")
+        self.student_table.heading("Photo", text="PhotoSampleStatus")
+        self.student_table["show"] = "headings"
