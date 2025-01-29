@@ -295,3 +295,168 @@ class Student:
         self.student_table.heading("Phone", text="Phone")
         self.student_table.heading("Photo", text="PhotoSampleStatus")
         self.student_table["show"] = "headings"
+
+        self.student_table.column("Department", width=100)
+        self.student_table.column("Course", width=100)
+        self.student_table.column("Year", width=100)
+        self.student_table.column("Sem", width=100)
+        self.student_table.column("Id", width=100)
+        self.student_table.column("Name", width=100)
+        self.student_table.column("Div", width=100)
+        self.student_table.column("Reg", width=100)
+        self.student_table.column("Email", width=100)
+        self.student_table.column("Phone", width=100)
+        self.student_table.column("Photo", width=120)
+
+        self.student_table.pack(fill=BOTH, expand=1)
+        self.student_table.bind("<ButtonRelease>", self.get_cursor)
+        self.fetch_data()
+
+    # ============== Function Declaration ==========
+
+    def add_data(self):
+        if self.var_dep.get() == "Select Department" or self.var_std_name.get() == "" or self.var_std_id.get() == "":
+            messagebox.showerror(
+                "Error", "All Fields are required", parent=self.root)
+        else:
+            try:
+                conn = mysql.connector.connect(
+                    host="localhost", username="root", password="mysqlisbest@#1", database="face_recognition")
+                my_cursor = conn.cursor()
+                my_cursor.execute("INSERT INTO student values(%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)", (
+                    self.var_dep.get(),
+                    self.var_course.get(),
+                    self.var_year.get(),
+                    self.var_semester.get(),
+                    self.var_std_id.get(),
+                    self.var_std_name.get(),
+                    self.var_div.get(),
+                    self.var_reg.get(),
+                    self.var_email.get(),
+                    self.var_phone.get(),
+                    self.var_radio1.get()
+                ))
+                conn.commit()
+                self.fetch_data()
+                conn.close()
+                messagebox.showinfo(
+                    "Success", "Student details has been added Successfully", parent=self.root)
+            except Exception as es:
+                messagebox.showerror(
+                    "Error", f"Due to:{str(es)}", parent=self.root)
+
+    # ========== Fetch Data ===================
+
+    def fetch_data(self):
+        conn = mysql.connector.connect(
+            host="localhost", username="root", password="mysqlisbest@#1", database="face_recognition")
+        my_cursor = conn.cursor()
+        my_cursor.execute("select * from student")
+        data = my_cursor.fetchall()
+
+        if len(data) != 0:
+            self.student_table.delete(*self.student_table.get_children())
+            for i in data:
+                self.student_table.insert("", END, values=i)
+            conn.commit()
+        conn.close()
+
+    # =============== Get Cursor ==============
+    def get_cursor(self, event=""):
+        cursor_focus = self.student_table.focus()
+        content = self.student_table.item(cursor_focus)
+        data = content["values"]
+
+        self.var_dep.set(data[0]),
+        self.var_course.set(data[1]),
+        self.var_year.set(data[2]),
+        self.var_semester.set(data[3]),
+        self.var_std_id.set(data[4]),
+        self.var_std_name.set(data[5]),
+        self.var_div.set(data[6]),
+        self.var_reg.set(data[7]),
+        self.var_email.set(data[8]),
+        self.var_phone.set(data[9]),
+        self.var_radio1.set(data[10])
+
+# =========== Update Function===============
+    def update_data(self):
+        if self.var_dep.get() == "Select Department" or self.var_std_name.get() == "" or self.var_std_id.get() == "":
+            messagebox.showerror(
+                "Error", "All Fields are required", parent=self.root)
+        else:
+            try:
+                Update = messagebox.askyesno(
+                    "Update", "Do you want to update this student details", parent=self.root)
+                if Update > 0:
+                    conn = mysql.connector.connect(
+                        host="localhost", username="root", password="mysqlisbest@#1", database="face_recognition")
+                    my_cursor = conn.cursor()
+                    my_cursor.execute("update student set Dep=%s, course=%s, Year=%s, Semester=%s, Name=%s, Division=%s, Reg=%s, Email=%s, Phone=%s, PhotoSample=%s where Student_id=%s", (
+                        self.var_dep.get(),
+                        self.var_course.get(),
+                        self.var_year.get(),
+                        self.var_semester.get(),
+                        self.var_std_name.get(),
+                        self.var_div.get(),
+                        self.var_reg.get(),
+                        self.var_email.get(),
+                        self.var_phone.get(),
+                        self.var_radio1.get(),
+                        self.var_std_id.get()
+                    ))
+                    conn.commit()
+                    conn.close()
+                    messagebox.showinfo(
+                        "Success", "Student details successfully updated", parent=self.root)
+                    self.fetch_data()
+                else:
+                    if not Update:
+                        return
+            except Exception as es:
+                messagebox.showerror(
+                    "Error", f"Due To: {str(es)}", parent=self.root)
+
+    # =========== Delete Function ===========
+
+    def delete_data(self):
+        if self.var_std_id.get() == "":
+            messagebox.showerror(
+                "Error", "Student id must be required", parent=self.root)
+        else:
+            try:
+                delete = messagebox.askyesno(
+                    "Student Delete Page", "Do you want to delete this student", parent=self.root)
+                if delete > 0:
+                    conn = mysql.connector.connect(
+                        host="localhost", username="root", password="mysqlisbest@#1", database="face_recognition")
+                    my_cursor = conn.cursor()
+                    sql = "delete from student where Student_id=%s"
+                    val = (self.var_std_id.get(),)
+                    my_cursor.execute(sql, val)
+                else:
+                    if not delete:
+                        return
+                conn.commit()
+                self.fetch_data()
+                conn.close()
+                messagebox.showinfo(
+                    "Delete", "Succesfully deleted student details", parent=self.root)
+            except Exception as es:
+                messagebox.showerror(
+                    "Error", f"Due To:{str(es)}", parent=self.root)
+
+    # ============ Reset ============
+
+    def reset_data(self):
+        self.var_dep.set("Select Department")
+        self.var_course.set("Select Course")
+        self.var_year.set("Select Year")
+        self.var_semester.set("Select Semester")
+        self.var_std_id.set("")
+        self.var_std_name.set("")
+        self.var_div.set("Select Division")
+        self.var_reg.set("")
+        self.var_email.set("")
+        self.var_phone.set("")
+        self.var_radio1.set("")
